@@ -6,6 +6,5 @@
 *.pt
 *.json
 *.sqlite3
+*.pckl
 web
-data
-splits
