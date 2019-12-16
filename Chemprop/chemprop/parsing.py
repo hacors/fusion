@@ -313,7 +313,7 @@ def parse_train_args() -> Namespace:
 
     :return: A Namespace containing the parsed, modified, and validated args.
     """
-    temp_input = '--data_path data/tox21.csv --dataset_type classification --save_dir tox21_checkpoints --gpu 0'
+    temp_input = '--data_path data/tox21.csv --dataset_type classification --save_dir tox21_checkpoints'
 
     parser = ArgumentParser()
     add_train_args(parser)
