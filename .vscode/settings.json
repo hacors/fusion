@@ -1,6 +1,6 @@
 {
     "python.linting.flake8Enabled": true,
-    "python.pythonPath": "/home/user/anaconda3/envs/3DGCN/bin/python",
+    "python.pythonPath": "/home/user/anaconda3/envs/Chemprop/bin/python",
     "python.terminal.activateEnvironment": true,
     "python.linting.pylintEnabled": false,
     "python.linting.flake8Args": [
