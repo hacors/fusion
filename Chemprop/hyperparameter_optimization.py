@@ -101,7 +101,8 @@ if __name__ == '__main__':
                         help='Path to .json file where best hyperparameter settings will be written')
     parser.add_argument('--log_dir', type=str,
                         help='(Optional) Path to a directory where all results of the hyperparameter optimization will be written')
-    args = parser.parse_args()
-    modify_train_args(args)
+    temp_input = '--data_path data/tox21.csv --dataset_type classification --save_dir log/tox21_checkpoints --gpu 0 --num_iters 20 --config_save_path log/best_json --log_dir log/temp'
+    args = parser.parse_args(temp_input.split())
+    modify_train_args(args)  # 对输入的参数进行调整
 
     grid_search(args)
