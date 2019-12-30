@@ -118,7 +118,8 @@ def get_data(path: str,
     if features_path is not None:
         features_data = []
         for feat_path in features_path:
-            features_data.append(load_features(feat_path))  # each is num_data x num_features
+            # each is num_data x num_features
+            features_data.append(load_features(feat_path))
         features_data = np.concatenate(features_data, axis=1)
     else:
         features_data = None
@@ -141,7 +142,13 @@ def get_data(path: str,
 
             if len(lines) >= max_data_size:
                 break
-
+        middle = []
+        for i, line in tqdm(enumerate(lines), total=len(lines)):
+            temp = MoleculeDatapoint(
+                line=line, args=args, features=features_data[i] if features_data is not None else None, use_compound_names=use_compound_names)
+            middle.append(temp)
+        data = MoleculeDataset(middle)
+        ''''
         data = MoleculeDataset([
             MoleculeDatapoint(
                 line=line,
@@ -150,6 +157,7 @@ def get_data(path: str,
                 use_compound_names=use_compound_names
             ) for i, line in tqdm(enumerate(lines), total=len(lines))
         ])
+        '''
 
     # Filter out invalid SMILES
     if skip_invalid_smiles:
@@ -157,7 +165,8 @@ def get_data(path: str,
         data = filter_invalid_smiles(data)
 
         if len(data) < original_data_len:
-            debug(f'Warning: {original_data_len - len(data)} SMILES are invalid.')
+            debug(
+                f'Warning: {original_data_len - len(data)} SMILES are invalid.')
 
     if data.data[0].features is not None:
         args.features_dim = len(data.data[0].features)
@@ -176,7 +185,8 @@ def get_data_from_smiles(smiles: List[str], skip_invalid_smiles: bool = True, lo
     """
     debug = logger.debug if logger is not None else print
 
-    data = MoleculeDataset([MoleculeDatapoint(line = [smile], args = args) for smile in smiles])
+    data = MoleculeDataset(
+        [MoleculeDatapoint(line=[smile], args=args) for smile in smiles])
 
     # Filter out invalid SMILES
     if skip_invalid_smiles:
@@ -184,7 +194,8 @@ def get_data_from_smiles(smiles: List[str], skip_invalid_smiles: bool = True, lo
         data = filter_invalid_smiles(data)
 
         if len(data) < original_data_len:
-            debug(f'Warning: {original_data_len - len(data)} SMILES are invalid.')
+            debug(
+                f'Warning: {original_data_len - len(data)} SMILES are invalid.')
 
     return data
 
@@ -216,7 +227,7 @@ def split_data(data: MoleculeDataset,
             args.folds_file, args.val_fold_index, args.test_fold_index
     else:
         folds_file = val_fold_index = test_fold_index = None
-    
+
     if split_type == 'crossval':
         index_set = args.crossval_index_sets[args.seed]
         data_split = []
@@ -228,7 +239,7 @@ def split_data(data: MoleculeDataset,
             data_split.append([data[i] for i in split_indices])
         train, val, test = tuple(data_split)
         return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset(test)
-    
+
     elif split_type == 'index_predetermined':
         split_indices = args.crossval_index_sets[args.seed]
         assert len(split_indices) == 3
@@ -240,7 +251,8 @@ def split_data(data: MoleculeDataset,
 
     elif split_type == 'predetermined':
         if not val_fold_index:
-            assert sizes[2] == 0  # test set is created separately so use all of the other data for train and val
+            # test set is created separately so use all of the other data for train and val
+            assert sizes[2] == 0
         assert folds_file is not None
         assert test_fold_index is not None
 
@@ -249,12 +261,14 @@ def split_data(data: MoleculeDataset,
                 all_fold_indices = pickle.load(f)
         except UnicodeDecodeError:
             with open(folds_file, 'rb') as f:
-                all_fold_indices = pickle.load(f, encoding='latin1')  # in case we're loading indices from python2
+                # in case we're loading indices from python2
+                all_fold_indices = pickle.load(f, encoding='latin1')
         # assert len(data) == sum([len(fold_indices) for fold_indices in all_fold_indices])
 
         log_scaffold_stats(data, all_fold_indices, logger=logger)
 
-        folds = [[data[i] for i in fold_indices] for fold_indices in all_fold_indices]
+        folds = [[data[i] for i in fold_indices]
+                 for fold_indices in all_fold_indices]
 
         test = folds[test_fold_index]
         if val_fold_index is not None:
@@ -275,7 +289,7 @@ def split_data(data: MoleculeDataset,
             val = train_val[train_size:]
 
         return MoleculeDataset(train), MoleculeDataset(val), MoleculeDataset(test)
-    
+
     elif split_type == 'scaffold_balanced':
         return scaffold_split(data, sizes=sizes, balanced=True, seed=seed, logger=logger)
 
@@ -371,9 +385,11 @@ def validate_data(data_path: str) -> Set[str]:
     if len(num_tasks_set) == 1:
         num_tasks = num_tasks_set.pop()
         if num_tasks != len(header) - 1:
-            errors.add('Number of tasks for each molecule doesn\'t match number of tasks in header.')
+            errors.add(
+                'Number of tasks for each molecule doesn\'t match number of tasks in header.')
 
-    unique_targets = set(np.unique([target for mol_targets in targets for target in mol_targets]))
+    unique_targets = set(
+        np.unique([target for mol_targets in targets for target in mol_targets]))
 
     if unique_targets <= {''}:
         errors.add('All targets are missing.')

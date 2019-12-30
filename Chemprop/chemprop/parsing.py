@@ -152,7 +152,7 @@ def add_train_args(parser: ArgumentParser):
                         help='Maximum learning rate')
     parser.add_argument('--final_lr', type=float, default=1e-4,
                         help='Final learning rate')
-    parser.add_argument('--no_features_scaling', action='store_true', default=False,
+    parser.add_argument('--no_features_scaling', action='store_true', default=False, #相当于是否正则化
                         help='Turn off scaling of features')
 
     # Model arguments
@@ -325,7 +325,7 @@ def parse_train_args() -> Namespace:
 
     :return: A Namespace containing the parsed, modified, and validated args.
     """
-    temp_input = '--data_path data/bbbp.csv --dataset_type classification --save_dir log/bbbp --gpu 0 --num_folds 3 --ensemble_size 2'
+    temp_input = '--data_path data/bbbp.csv --dataset_type classification --save_dir log/bbbp --gpu 0 --num_folds 5 --features_generator rdkit_2d_normalized --no_features_scaling'
 
     parser = ArgumentParser()
     add_train_args(parser)
