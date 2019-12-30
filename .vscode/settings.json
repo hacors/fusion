@@ -1,18 +1,6 @@
 {
     "python.linting.flake8Enabled": true,
-    "python.pythonPath": "/home/user/anaconda3/envs/Chemprop/bin/python",
-    "python.terminal.activateEnvironment": true,
     "python.linting.pylintEnabled": false,
-    "python.linting.flake8Args": [
-        "--max-line-length=250"
-    ],
-    "python.formatting.provider": "autopep8",
-    "python.formatting.autopep8Args": [
-        "--max-line-length=250"
-    ],
-    "editor.fontFamily": "consolas, 'Courier New', monospace",
-    "editor.fontSize": 16,
-    "editor.fontLigatures": true,
-    "remote.SSH.showLoginTerminal": true,
-    "python.linting.enabled": true
+    "python.pythonPath": "/home/user/anaconda3/envs/Chemprop/bin/python",
+    "python.terminal.activateEnvironment": true
 }

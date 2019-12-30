@@ -94,7 +94,8 @@ def add_train_args(parser: ArgumentParser):
     parser.add_argument('--separate_test_features_path', type=str, nargs='*',
                         help='Path to file with features for separate test set')
     parser.add_argument('--split_type', type=str, default='random',
-                        choices=['random', 'scaffold_balanced', 'predetermined', 'crossval', 'index_predetermined'],
+                        choices=['random', 'scaffold_balanced',
+                                 'predetermined', 'crossval', 'index_predetermined'],
                         help='Method of splitting the data into train/val/test')
     parser.add_argument('--split_sizes', type=float, nargs=3, default=[0.8, 0.1, 0.1],
                         help='Split proportions for train/validation/test sets')
@@ -116,7 +117,8 @@ def add_train_args(parser: ArgumentParser):
                              'When `num_folds` > 1, the first fold uses this seed and all'
                              'subsequent folds add 1 to the seed.')
     parser.add_argument('--metric', type=str, default=None,
-                        choices=['auc', 'prc-auc', 'rmse', 'mae', 'mse', 'r2', 'accuracy', 'cross_entropy'],
+                        choices=['auc', 'prc-auc', 'rmse', 'mae',
+                                 'mse', 'r2', 'accuracy', 'cross_entropy'],
                         help='Metric to use during evaluation.'
                              'Note: Does NOT affect loss function used during training'
                              '(loss is determined by the `dataset_type` argument).'
@@ -165,7 +167,8 @@ def add_train_args(parser: ArgumentParser):
     parser.add_argument('--dropout', type=float, default=0.0,
                         help='Dropout probability')
     parser.add_argument('--activation', type=str, default='ReLU',
-                        choices=['ReLU', 'LeakyReLU', 'PReLU', 'tanh', 'SELU', 'ELU'],
+                        choices=['ReLU', 'LeakyReLU',
+                                 'PReLU', 'tanh', 'SELU', 'ELU'],
                         help='Activation function')
     parser.add_argument('--undirected', action='store_true', default=False,
                         help='Undirected edges (always sum the two relevant bond vectors)')
@@ -187,10 +190,12 @@ def update_checkpoint_args(args: Namespace):
         return
 
     if args.checkpoint_dir is not None and args.checkpoint_path is not None:
-        raise ValueError('Only one of checkpoint_dir and checkpoint_path can be specified.')
+        raise ValueError(
+            'Only one of checkpoint_dir and checkpoint_path can be specified.')
 
     if args.checkpoint_dir is None:
-        args.checkpoint_paths = [args.checkpoint_path] if args.checkpoint_path is not None else None
+        args.checkpoint_paths = [
+            args.checkpoint_path] if args.checkpoint_path is not None else None
         return
 
     args.checkpoint_paths = []
@@ -203,7 +208,8 @@ def update_checkpoint_args(args: Namespace):
     args.ensemble_size = len(args.checkpoint_paths)
 
     if args.ensemble_size == 0:
-        raise ValueError(f'Failed to find any model checkpoints in directory "{args.checkpoint_dir}"')
+        raise ValueError(
+            f'Failed to find any model checkpoints in directory "{args.checkpoint_dir}"')
 
 
 def modify_predict_args(args: Namespace):
@@ -226,9 +232,10 @@ def modify_predict_args(args: Namespace):
 
 
 def parse_predict_args() -> Namespace:
+    temp_input = '--test_path data/bbbp.csv --preds_path data/bbbp.predict.csv --checkpoint_dir log/bbbp'
     parser = ArgumentParser()
     add_predict_args(parser)
-    args = parser.parse_args()
+    args = parser.parse_args(temp_input.split())
     modify_predict_args(args)
 
     return args
@@ -275,9 +282,11 @@ def modify_train_args(args: Namespace):
     if not ((args.dataset_type == 'classification' and args.metric in ['auc', 'prc-auc', 'accuracy']) or
             (args.dataset_type == 'regression' and args.metric in ['rmse', 'mae', 'mse', 'r2']) or
             (args.dataset_type == 'multiclass' and args.metric in ['cross_entropy', 'accuracy'])):
-        raise ValueError(f'Metric "{args.metric}" invalid for dataset type "{args.dataset_type}".')
+        raise ValueError(
+            f'Metric "{args.metric}" invalid for dataset type "{args.dataset_type}".')
 
-    args.minimize_score = args.metric in ['rmse', 'mae', 'mse', 'cross_entropy']#?
+    args.minimize_score = args.metric in [
+        'rmse', 'mae', 'mse', 'cross_entropy']  # ?
 
     update_checkpoint_args(args)
 
@@ -294,9 +303,12 @@ def modify_train_args(args: Namespace):
     if args.ffn_hidden_size is None:
         args.ffn_hidden_size = args.hidden_size
 
-    assert (args.split_type == 'predetermined') == (args.folds_file is not None) == (args.test_fold_index is not None)
-    assert (args.split_type == 'crossval') == (args.crossval_index_dir is not None)
-    assert (args.split_type in ['crossval', 'index_predetermined']) == (args.crossval_index_file is not None)
+    assert (args.split_type == 'predetermined') == (
+        args.folds_file is not None) == (args.test_fold_index is not None)
+    assert (args.split_type == 'crossval') == (
+        args.crossval_index_dir is not None)
+    assert (args.split_type in ['crossval', 'index_predetermined']) == (
+        args.crossval_index_file is not None)
     if args.split_type in ['crossval', 'index_predetermined']:
         with open(args.crossval_index_file, 'rb') as rf:
             args.crossval_index_sets = pickle.load(rf)
@@ -313,7 +325,7 @@ def parse_train_args() -> Namespace:
 
     :return: A Namespace containing the parsed, modified, and validated args.
     """
-    temp_input = '--data_path data/tox21.csv --dataset_type classification --save_dir log/tox21_checkpoints --gpu 0'
+    temp_input = '--data_path data/bbbp.csv --dataset_type classification --save_dir log/bbbp --gpu 0 --num_folds 3 --ensemble_size 2'
 
     parser = ArgumentParser()
     add_train_args(parser)
