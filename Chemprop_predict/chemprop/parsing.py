@@ -232,7 +232,7 @@ def modify_predict_args(args: Namespace):
 
 
 def parse_predict_args() -> Namespace:
-    temp_input = '--test_path data/bbbp.csv --preds_path data/bbbp.predict.csv --checkpoint_dir log/bbbp'
+    temp_input = '--test_path bbbp.csv --preds_path bbbp_predict.csv --checkpoint_dir bbbp_trained_model'
     parser = ArgumentParser()
     add_predict_args(parser)
     args = parser.parse_args(temp_input.split())
