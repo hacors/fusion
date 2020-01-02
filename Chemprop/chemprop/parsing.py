@@ -325,7 +325,7 @@ def parse_train_args() -> Namespace:
 
     :return: A Namespace containing the parsed, modified, and validated args.
     """
-    temp_input = '--data_path data/bbbp.csv --dataset_type classification --save_dir log/bbbp --gpu 0 --num_folds 5 --features_generator rdkit_2d_normalized --no_features_scaling'
+    temp_input = '--data_path data/bbbp.csv --dataset_type classification --save_dir log/bbbp --gpu 0 --num_folds 10 --features_generator rdkit_2d_normalized --no_features_scaling'
 
     parser = ArgumentParser()
     add_train_args(parser)
