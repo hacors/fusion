@@ -4,3 +4,4 @@ __pycache__
 **/*.csv
 **/*.sdf
 **/*.mat
+Chemprop_predict

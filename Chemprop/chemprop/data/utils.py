@@ -130,7 +130,7 @@ def get_data(path: str,
     with open(path) as f:
         reader = csv.reader(f)
         next(reader)  # skip header
-
+        
         lines = []
         for line in reader:
             smiles = line[0]
